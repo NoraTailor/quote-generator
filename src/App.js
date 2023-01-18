@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-
+import React, { useEffect, useState } from 'react';
+import Loading from './Loading';
 import Answer from './Answer';
 import Question from './Question';
 import Quotes from './Quotes';
@@ -8,7 +8,7 @@ import useFetch from './useFetch';
 function App() {
 	const [answer, setAnswer] = useState(0);
 	const [quotes, setQuotes] = useState([]);
-	const { data } = useFetch();
+	const { data, getQuote, loaded } = useFetch();
 	const [isClicked, setIsClicked] = useState(false);
 	const [count, setCount] = useState(0);
 	const [isGenerated, setIsGenerated] = useState(false);
@@ -20,6 +20,7 @@ function App() {
 	};
 
 	const generate = () => {
+		getQuote();
 		setIsGenerated(true);
 		setCount(count + 1);
 		setQuotes(data);
@@ -44,9 +45,14 @@ function App() {
 					generate={generate}
 					handleReset={handleReset}></Answer>
 			)}
-			{isGenerated && <Quotes quotes={quotes}></Quotes>}
+			{isGenerated ? (
+				!loaded ? (
+					<Loading />
+				) : (
+					<Quotes quotes={quotes}></Quotes>
+				)
+			) : null}
 		</>
 	);
 }
-
 export default App;
